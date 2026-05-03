@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karakter Testi · Eğitim Amaçlı</title>
+
+  <!-- El yazısı fontları: başlıklar için Caveat, gövde için daha okunaklı Kalam -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       TASARIM SİSTEMİ
+       Terracotta zemin + pembe butonlar + mint vurgular
+       ========================================================= */
+    :root {
+      /* Ana renkler */
+      --bg:           #D96941;     /* terracotta arka plan */
+      --bg-deep:      #C25535;     /* daha koyu terracotta — derinlik için */
+      --bg-warm:      #E68460;     /* daha açık turuncu — gradient için */
+      --surface:      #FBF4E6;     /* sıcak krem kart yüzeyi */
+      --surface-soft: #F5E8D0;     /* kart üstü ince katman */
+
+      --ink:          #2A1F1A;     /* ana metin (kart üzerinde) */
+      --ink-soft:     #6B5547;     /* yardımcı metin */
+      --ink-light:    #FBF4E6;     /* açık metin (terracotta üzerinde) */
+      --line:         #E8D8C0;     /* ince ayraç */
+
+      /* Buton renkleri ve karşıt rengi */
+      --btn:          #F2668B;     /* pembe buton */
+      --btn-hover:    #ED5680;     /* pembe hover */
+      --btn-flash:    #66F2CD;     /* mint — pembenin renk skalasındaki karşıtı */
+      --btn-text:     #FBF4E6;
+
+      --shadow:       0 14px 50px -16px rgba(60, 20, 10, .35);
+      --radius:       14px;
+      --radius-sm:    8px;
+
+      /* El yazısı font stack */
+      --font-display: 'Caveat', 'Bradley Hand', 'Brush Script MT', cursive;
+      --font-body:    'Kalam', 'Bradley Hand', 'Comic Sans MS', cursive;
+    }
+
+    /* =========================================================
+       SIFIRLAMA + ZEMİN
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--ink);
+      background: var(--bg);
+      /* Çoklu radial gradient — terracotta zemine güneşli derinlik */
+      background-image:
+        radial-gradient(ellipse at top left,    rgba(242, 132, 96, .55), transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(194, 85, 53, .55), transparent 55%),
+        radial-gradient(circle at 70% 20%,       rgba(242, 102, 139, .12), transparent 40%);
+      background-attachment: fixed;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 17px;
+      overflow-x: hidden; /* konfeti taşmasın */
+    }
+
+    /* =========================================================
+       KONFETİ KATMANI
+       Sayfanın üstünde sabit, tıklamayı engellemez
+       ========================================================= */
+    .confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -40px;
+      animation: confetti-fall linear forwards;
+      will-change: transform;
+    }
+
+    /* Konfeti düşme animasyonu — yan sallanma + dönme + hafif solma */
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-40px) translateX(0) rotate(0deg) scale(var(--scale, 1));
+        opacity: 0;
+      }
+      8% {
+        opacity: 1;
+      }
+      85% {
+        opacity: 1;
+      }
+      100% {
+        transform:
+          translateY(110vh)
+          translateX(var(--sway, 0))
+          rotate(var(--rotate, 720deg))
+          scale(var(--scale, 1));
+        opacity: 0.4;
+      }
+    }
+
+    .confetti-piece svg {
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 2px 3px rgba(60, 20, 10, .15));
+    }
+
+    /* =========================================================
+       SAYFA YAPISI
+       ========================================================= */
+    .page {
+      flex: 1;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* === Üst başlık — terracotta üzerinde açık metin === */
+    .masthead {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .masthead .eyebrow {
+      font-family: var(--font-body);
+      font-size: 13px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      opacity: .85;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .masthead h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(36px, 6.5vw, 54px);
+      letter-spacing: -.005em;
+      margin: 0;
+      color: var(--ink-light);
+      line-height: 1.05;
+      text-shadow: 0 2px 12px rgba(60, 20, 10, .25);
+    }
+    .masthead .rule {
+      width: 48px;
+      height: 1px;
+      background: var(--ink-light);
+      opacity: .4;
+      margin: 18px auto 0;
+    }
+
+    /* =========================================================
+       UYARI METNİ
+       ========================================================= */
+    .disclaimer {
+      background: rgba(251, 244, 230, .92);
+      border-left: 3px solid var(--btn);
+      padding: 14px 18px;
+      margin: 0 0 28px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 16px;
+      color: var(--ink-soft);
+      font-style: italic;
+      font-weight: 300;
+      backdrop-filter: blur(4px);
+    }
+
+    /* =========================================================
+       KART — krem ada terracotta denizinde
+       ========================================================= */
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, .4);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      animation: fadeUp .5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================================
+       GİRİŞ EKRANI
+       ========================================================= */
+    .intro h2 {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+    .intro p {
+      color: var(--ink-soft);
+      margin: 0 0 22px;
+      font-size: 17px;
+    }
+    .meta-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 28px;
+    }
+    .meta-item { flex: 1; min-width: 120px; }
+    .meta-item .label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 2px;
+      font-weight: 700;
+    }
+    .meta-item .value {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--ink);
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    /* =========================================================
+       İLERLEME GÖSTERGESİ
+       ========================================================= */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .progress .count {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--ink-soft);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .progress .bar {
+      flex: 1;
+      height: 2px;
+      background: var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+    .progress .bar-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: var(--btn);
+      transition: width .4s cubic-bezier(.65, 0, .35, 1);
+    }
+
+    /* =========================================================
+       SORU EKRANI
+       ========================================================= */
+    .question-text {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4.5vw, 32px);
+      font-weight: 600;
+      line-height: 1.2;
+      margin: 0 0 24px;
+      color: var(--ink);
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 32px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-soft);
+      cursor: pointer;
+      /* DİKKAT: transition default olarak yumuşak — :active'de instant olacak */
+      transition:
+        background .35s cubic-bezier(.4, 0, .2, 1),
+        border-color .25s ease,
+        transform .15s ease,
+        color .35s cubic-bezier(.4, 0, .2, 1);
+      font-size: 17px;
+      color: var(--ink);
+      text-align: left;
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.4;
+      width: 100%;
+    }
+    .option:hover {
+      border-color: var(--btn);
+      background: #FBE8E8;
+      transform: translateX(2px);
+    }
+    /* TIKLAMA FLASH — pembenin karşıt rengi mint yeşili */
+    .option:active {
+      background: var(--btn-flash);
+      border-color: var(--btn-flash);
+      color: var(--ink);
+      transition: all 0s; /* instant flash */
+    }
+    .option:focus-visible {
+      outline: 2px solid var(--btn);
+      outline-offset: 2px;
+    }
+    .option.selected {
+      border-color: var(--btn);
+      background: #FBE0E8;
+    }
+    .option .marker {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border: 1.5px solid var(--line);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      transition: all .25s ease;
+      line-height: 1;
+    }
+    .option:hover .marker,
+    .option.selected .marker {
+      border-color: var(--btn);
+      background: var(--btn);
+      color: var(--btn-text);
+    }
+
+    /* =========================================================
+       BUTONLAR
+       ========================================================= */
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-display);
+      font-size: 22px;
+      padding: 8px 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      line-height: 1.4;
+      position: relative;
+      /* Yumuşak geçiş — :active'de instant olacak (flash etkisi) */
+      transition:
+        background .4s cubic-bezier(.4, 0, .2, 1),
+        color .4s cubic-bezier(.4, 0, .2, 1),
+        border-color .25s ease,
+        transform .2s ease,
+        box-shadow .35s ease;
+    }
+
+    /* === BİRİNCİL BUTON: pembe + iki-renk halo === */
+    .btn-primary {
+      background: var(--btn);
+      color: var(--btn-text);
+      /* İKİ-RENK HALO: içte pembe, dışta turuncu — yumuşak renk kayışı */
+      box-shadow:
+        0 0 0   1px rgba(255, 255, 255, .15) inset,
+        0 0 22px -2px rgba(242, 102, 139, .55),  /* pembe iç halo */
+        0 0 48px -8px rgba(217, 105, 65,  .45),  /* turuncu dış halo (zeminle bağ) */
+        0 6px 16px -6px rgba(60, 20, 10,  .25);  /* derinlik */
+    }
+    .btn-primary:hover {
+      background: var(--btn-hover);
+      transform: translateY(-1px);
+      box-shadow:
+        0 0 0   1px rgba(255, 255, 255, .2) inset,
+        0 0 30px -2px rgba(242, 102, 139, .7),
+        0 0 60px -8px rgba(217, 105, 65,  .55),
+        0 8px 22px -6px rgba(60, 20, 10,  .3);
+    }
+    /* === FLASH: pembenin renk skalasındaki karşıt rengi (mint #66F2CD) === */
+    .btn-primary:active {
+      background: var(--btn-flash);
+      color: #1A4A45;
+      box-shadow:
+        0 0 0   1px rgba(255, 255, 255, .25) inset,
+        0 0 30px -2px rgba(102, 242, 205, .7),
+        0 0 60px -8px rgba(102, 242, 205, .4),
+        0 4px 12px -4px rgba(60, 20, 10,  .25);
+      transition: all 0s; /* anında geçiş — flash etkisi */
+    }
+    .btn-primary:disabled {
+      background: #E0CCC0;
+      color: #9A8A7A;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* === HAYALET BUTON: kart üzerinde sade === */
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink-soft);
+      border-color: var(--line);
+    }
+    .btn-ghost:hover {
+      color: var(--btn);
+      border-color: var(--btn);
+    }
+    /* Hayalet buton için de mint flash */
+    .btn-ghost:active {
+      background: var(--btn-flash);
+      color: #1A4A45;
+      border-color: var(--btn-flash);
+      transition: all 0s;
+    }
+
+    /* =========================================================
+       SONUÇ EKRANI
+       ========================================================= */
+    .result-eyebrow {
+      font-family: var(--font-body);
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--btn);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .result-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 7vw, 56px);
+      font-weight: 700;
+      text-align: center;
+      margin: 0 0 4px;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .result-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--btn);
+      margin: 18px auto 22px;
+    }
+    .result-description {
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.55;
+      color: var(--ink);
+      margin: 0 auto 28px;
+      text-align: center;
+      font-weight: 300;
+      font-style: italic;
+      max-width: 520px;
+    }
+
+    /* === PIXEL ART KARAKTER === */
+    .result-pixel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 24px auto 32px;
+      padding: 24px;
+      width: fit-content;
+      background: radial-gradient(
+        circle at center,
+        var(--pixel-bg, #F5E8D8) 0%,
+        var(--pixel-bg, #F5E8D8) 55%,
+        transparent 75%
+      );
+      animation: float 4s ease-in-out infinite;
+    }
+    .result-pixel svg {
+      display: block;
+      width: 192px;
+      height: 192px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 4px 8px rgba(60, 20, 10, .15));
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+
+    .result-section {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+    }
+    .result-section .label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--btn);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .result-section .body {
+      font-size: 17px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .result-actions {
+      margin-top: 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* =========================================================
+       YARDIMCI
+       ========================================================= */
+    .hidden { display: none !important; }
+
+    /* =========================================================
+       LOGO
+       ========================================================= */
+    .masthead-logo {
+      display: block;
+      width: clamp(64px, 14vw, 100px);
+      height: auto;
+      margin: 0 auto 14px;
+      border-radius: 14px;
+      filter: drop-shadow(0 4px 12px rgba(60, 20, 10, .3));
+      /* Hafif parlama — logoya masalsı his katar */
+      animation: logoPulse 4s ease-in-out infinite;
+    }
+    @keyframes logoPulse {
+      0%, 100% { filter: drop-shadow(0 4px 12px rgba(60, 20, 10, .3)); }
+      50%      { filter: drop-shadow(0 4px 18px rgba(242, 102, 139, .4)); }
+    }
+
+    /* =========================================================
+       KEDİ VİDEOSU — Eğlence bölümü
+       ========================================================= */
+    .fun-section {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .fun-card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, .4);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      text-align: center;
+    }
+    .fun-card .fun-label {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .fun-card video {
+      width: 100%;
+      max-width: 480px;
+      border-radius: var(--radius-sm);
+      box-shadow:
+        0 0 20px -4px rgba(242, 102, 139, .35),
+        0 0 44px -10px rgba(217, 105, 65, .3);
+    }
+    .fun-card .fun-caption {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 12px;
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: var(--ink-light);
+      opacity: .7;
+      padding: 24px;
+      font-style: italic;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width: 600px) {
+      .page { padding: 24px 16px 60px; }
+      .card { padding: 28px 22px; }
+      .meta-row { gap: 14px; padding: 14px 0; }
+      .actions { flex-direction: column-reverse; align-items: stretch; }
+      .actions .btn { width: 100%; }
+      .option { padding: 12px 14px; font-size: 16px; }
+      .result-pixel svg { width: 160px; height: 160px; }
+      .fun-section { padding: 0 16px 24px; }
+      .fun-card { padding: 20px 16px; }
+      .fun-card .fun-label { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- === KONFETİ KATMANI (JS dolduracak) === -->
+  <div class="confetti-container" id="confetti" aria-hidden="true"></div>
+
+  <main class="page">
+
+    <header class="masthead">
+      <!-- Logo — site dosyasıyla aynı klasörde bulunmalı -->
+      <img src="logo.png" alt="Logo" class="masthead-logo" />
+      <div class="eyebrow">Karakter Testi</div>
+      <h1>Hangi Düşünme Stiline Yakınsın?</h1>
+      <div class="rule"></div>
+    </header>
+
+    <div class="disclaimer">
+      Bu test sadece eğlence ve eğitim amaçlıdır, psikolojik tanı değildir.
+    </div>
+
+    <section class="card" id="card">
+
+      <!-- GİRİŞ EKRANI -->
+      <div id="screen-intro" class="screen">
+        <div class="intro">
+          <h2>Kısa bir keşif yolculuğuna hoş geldin.</h2>
+          <p>
+            Aşağıda gündelik durumlara dair beş kısa soru göreceksin.
+            Senin için en doğal gelen seçeneği işaretle — doğru ya da yanlış cevap yok.
+            Sonunda dört farklı düşünme stilinden hangisine en yakın olduğunu öğreneceksin.
+          </p>
+
+          <div class="meta-row">
+            <div class="meta-item">
+              <div class="label">Soru</div>
+              <div class="value">5 adet</div>
+            </div>
+            <div class="meta-item">
+              <div class="label">Süre</div>
+              <div class="value">~3 dakika</div>
+            </div>
+            <div class="meta-item">
+              <div class="label">Sonuç</div>
+              <div class="value">Anında</div>
+            </div>
+          </div>
+
+          <div class="actions" style="justify-content: flex-end;">
+            <button class="btn btn-primary" id="start-btn">Teste Başla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SORU EKRANI -->
+      <div id="screen-question" class="screen hidden">
+        <div class="progress">
+          <span class="count" id="progress-count">Soru 1 / 5</span>
+          <div class="bar"><div class="bar-fill" id="progress-fill"></div></div>
+        </div>
+
+        <h2 class="question-text" id="question-text"></h2>
+
+        <ul class="options" id="options-list"></ul>
+
+        <div class="actions">
+          <button class="btn btn-ghost" id="back-btn">← Geri</button>
+          <button class="btn btn-primary" id="next-btn" disabled>Devam Et</button>
+        </div>
+      </div>
+
+      <!-- SONUÇ EKRANI -->
+      <div id="screen-result" class="screen hidden">
+        <div class="result-eyebrow">Sonucun</div>
+        <h2 class="result-title" id="result-title"></h2>
+        <div class="result-divider"></div>
+
+        <div class="result-pixel" id="result-pixel"></div>
+
+        <p class="result-description" id="result-description"></p>
+
+        <div class="result-section">
+          <div class="label">Güçlü Yönlerin</div>
+          <p class="body" id="result-strengths"></p>
+        </div>
+
+        <div class="result-section">
+          <div class="label">Gelişim Önerisi</div>
+          <p class="body" id="result-development"></p>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-primary" id="restart-btn">Testi Yeniden Başlat</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- === DANS EDEN KEDİ — Eğlence bölümü === -->
+  <section class="fun-section">
+    <div class="fun-card">
+      <div class="fun-label">Bonus: Dans Eden Kedi</div>
+      <video
+        src="kedi.mp4"
+        controls
+        loop
+        muted
+        playsinline
+        preload="metadata"
+      ></video>
+      <p class="fun-caption">Bu kedinin testle alakası yok — sadece gününüzü güzelleştirmek için burada.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Eğitim amaçlı tasarlanmıştır · Profesyonel destek için bir uzmana başvurun.
+  </footer>
+
+  <script>
+    /* =========================================================
+       SORULAR
+       ========================================================= */
+    const QUESTIONS = [
+      {
+        text: "Hafta sonu boş zamanın olduğunda ilk aklına ne gelir?",
+        options: [
+          { text: "Yapmak istediğim işleri planlar ve sıralarım.",          type: "analitik" },
+          { text: "Yeni bir hobi ya da yaratıcı bir proje denerim.",        type: "yaratici" },
+          { text: "Sevdiklerimle vakit geçirmeyi tercih ederim.",           type: "sosyal"   },
+          { text: "Kitap okur ya da sessiz bir yürüyüşe çıkarım.",          type: "sakin"    }
+        ]
+      },
+      {
+        text: "Bir sorunla karşılaştığında ona nasıl yaklaşırsın?",
+        options: [
+          { text: "Adım adım analiz eder, mantıksal çözümler ararım.",      type: "analitik" },
+          { text: "Alışılmadık ve yaratıcı çözümler düşünürüm.",            type: "yaratici" },
+          { text: "Başkalarının fikrini alır, birlikte konuşarak çözerim.", type: "sosyal"   },
+          { text: "Önce sessizce düşünür, içsel olarak değerlendiririm.",   type: "sakin"    }
+        ]
+      },
+      {
+        text: "Bir grup çalışmasında en çok hangi rolü üstlenirsin?",
+        options: [
+          { text: "Plan ve programı oluşturan kişi olurum.",                type: "analitik" },
+          { text: "Yeni fikirler ve farklı bakış açıları sunarım.",         type: "yaratici" },
+          { text: "Herkesin sesinin duyulmasını sağlarım.",                 type: "sosyal"   },
+          { text: "Gözlemler ve gerektiğinde katkıda bulunurum.",           type: "sakin"    }
+        ]
+      },
+      {
+        text: "Senin için ideal bir çalışma ortamı nasıldır?",
+        options: [
+          { text: "Düzenli, yapılandırılmış ve hedefleri net bir ortam.",   type: "analitik" },
+          { text: "Esnek, ilham verici, yaratıcılığa açık bir ortam.",      type: "yaratici" },
+          { text: "Sıcak ve iş birliğine dayalı bir ekip ortamı.",          type: "sosyal"   },
+          { text: "Sessiz, bağımsız çalışılabilen bir ortam.",              type: "sakin"    }
+        ]
+      },
+      {
+        text: "Yeni bir konu öğrenirken en çok hangi yaklaşımı benimsersin?",
+        options: [
+          { text: "Kapsamlı araştırma yapar, düzenli notlar tutarım.",      type: "analitik" },
+          { text: "Deneme yanılma ile farklı yöntemler keşfederim.",        type: "yaratici" },
+          { text: "Tartışarak ve başkalarıyla paylaşarak öğrenirim.",       type: "sosyal"   },
+          { text: "Kendi tempomda, gözlemleyerek özümserim.",               type: "sakin"    }
+        ]
+      }
+    ];
+
+    /* =========================================================
+       PIXEL ART KARAKTERLERİ — 16x16 sprite'lar
+       ========================================================= */
+    const SPRITES = {
+      analitik: {
+        bg: "#E8E0F0",
+        palette: { ".": null, "o": "#3A3540", "s": "#FBD9BF", "h": "#C8B8E0",
+                   "e": "#3A3540", "m": "#D97A8A", "c": "#A8C8D8", "w": "#FEF9F3" },
+        pixels: [
+          "................", ".....oooooo.....", "....ohhhhhho....", "...ohhhhhhhho...",
+          "..ohhssssssh....", "..ohssssssss....", "..ohssssssss....", "..ohsoesoesh....",
+          "..ohssssssss....", "..ohssssssss....", "..ohssmmmsss....", "...ohssssso.....",
+          "....oooooo......", "...ccccccccc....", "..cwwwwwwwwwc...", "..cccccccccccc.."
+        ]
+      },
+      yaratici: {
+        bg: "#F5D8D8",
+        palette: { ".": null, "o": "#3A3540", "s": "#FBD9BF", "h": "#D4A8B8",
+                   "b": "#F5B8C8", "e": "#3A3540", "m": "#D97A8A", "c": "#F5C8A8" },
+        pixels: [
+          "................", ".......oo.......", ".....ooooo......", "....obbbbbo.....",
+          "...obbbbbbbo....", "...ohhhhhhho....", "..ohhsssssshh...", "..ohssssssssh...",
+          "..ohseoseosss...", "..ohsssssssss...", "..ohssmmmmsss...", "...ohsssssss....",
+          "....oooooooo....", "...cccccccccc...", "..cccccccccccc..", "..cccccccccccc.."
+        ]
+      },
+      sosyal: {
+        bg: "#F5E8C8",
+        palette: { ".": null, "o": "#3A3540", "s": "#FBD9BF", "h": "#F5D8A8",
+                   "e": "#3A3540", "m": "#D97A8A", "c": "#F5E8A8" },
+        pixels: [
+          "................", "....oooooooo....", "...ohhhhhhhho...", "..ohhhhhhhhhho..",
+          "..ohssssssssh...", "..ohssssssssh...", "..ohseossseso...", "..ohsssssssss...",
+          "..ohsssssssss...", "..ohsmmmmmmsss..", "...ohsmmmmmsso..", "....ohsssssso...",
+          ".....oooooo.....", "...cccccccccc...", "..cccccccccccc..", "..cccccccccccc.."
+        ]
+      },
+      sakin: {
+        bg: "#D8ECE0",
+        palette: { ".": null, "o": "#3A3540", "s": "#FBD9BF", "h": "#B8C8D8",
+                   "e": "#3A3540", "m": "#D97A8A", "c": "#B8E0C8" },
+        pixels: [
+          "................", ".....oooooo.....", "....ohhhhhho....", "...ohhhhhhhho...",
+          "..ohhssssssh....", "..ohssssssss....", "..ohssssssss....", "..ohsoosoosss...",
+          "..ohssssssss....", "..ohssssssss....", "..ohsssmsssss...", "...ohssssso.....",
+          "....oooooo......", "...cccccccccc...", "..cccccccccccc..", "..cccccccccccc.."
+        ]
+      }
+    };
+
+    /* =========================================================
+       SONUÇ AÇIKLAMALARI
+       ========================================================= */
+    const RESULTS = {
+      analitik: {
+        title: "Analitik Planlayıcı",
+        description: "Düzeni, mantığı ve yapıyı seven biri olarak çevreni planlı bir şekilde organize edersin. Detayları gözden kaçırmaz, kararlarını veriler ve mantık üzerine inşa edersin.",
+        strengths: "Sistematik düşünme, organize olma, problem çözme, hedef odaklılık, güvenilirlik.",
+        development: "Zaman zaman planlarının dışına çıkıp sezgisel kararlar almayı denemen, esneklik becerini geliştirmene yardımcı olabilir."
+      },
+      yaratici: {
+        title: "Yaratıcı Keşifçi",
+        description: "Yenilik ve özgünlük arayan, sıra dışı bağlantılar kurabilen biri olarak hayata farklı bir pencereden bakarsın. Hayal gücün ve merakın seni sürekli yeni alanlara taşır.",
+        strengths: "Yaratıcılık, esneklik, yenilik arayışı, vizyon, ilham verme.",
+        development: "Fikirlerini hayata geçirirken belirli bir yapı ve düzen kurmaya zaman ayırmak, projelerini tamamlama becerini güçlendirebilir."
+      },
+      sosyal: {
+        title: "Sosyal Destekçi",
+        description: "İnsan ilişkilerine değer veren, empati kurabilen biri olarak çevrendekilerin duygularını anlamaya özen gösterirsin. Birlikte üretmek ve paylaşmak seni besler.",
+        strengths: "Empati, iletişim, takım çalışması, dinleme, destek olma.",
+        development: "Başkalarına yardım ederken kendi sınırlarını korumaya ve kendine de zaman ayırmaya özen göstermek dengeyi koruyabilir."
+      },
+      sakin: {
+        title: "Sakin Gözlemci",
+        description: "İçe dönük, derin düşünen ve gözlem gücü yüksek biri olarak çevreni sessizce ama dikkatle değerlendirirsin. Acele etmez, anlamlı bağlantılar kurarsın.",
+        strengths: "Derin düşünme, gözlem, sabır, içsel denge, anlamlı analiz.",
+        development: "Düşüncelerini ve içgörülerini başkalarıyla daha sık paylaşmak, çevrendeki etkini artırabilir."
+      }
+    };
+
+    /* =========================================================
+       PIXEL ART RENDER FONKSİYONU
+       ========================================================= */
+    function renderSprite(spriteKey) {
+      const sprite = SPRITES[spriteKey];
+      const pixelSize = 12;
+      const rows = sprite.pixels;
+      const height = rows.length;
+      const width = rows[0].length;
+
+      let rects = "";
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const ch = rows[y][x];
+          const color = sprite.palette[ch];
+          if (color) {
+            rects += `<rect x="${x * pixelSize}" y="${y * pixelSize}" width="${pixelSize}" height="${pixelSize}" fill="${color}"/>`;
+          }
+        }
+      }
+      const w = width * pixelSize;
+      const h = height * pixelSize;
+      return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">${rects}</svg>`;
+    }
+
+    /* =========================================================
+       KONFETİ — Masalsı pixel art şekiller
+       Her şekil küçük bir 5x5 (veya 3x3) sprite olarak SVG'ye çizilir.
+       ========================================================= */
+    const CONFETTI_SHAPES = {
+      // Elmas — döndüğünde kristal gibi parıldar
+      diamond: [
+        "..X..",
+        ".XXX.",
+        "XXXXX",
+        ".XXX.",
+        "..X.."
+      ],
+      // Kalp — masalsı detay
+      heart: [
+        ".X.X.",
+        "XXXXX",
+        "XXXXX",
+        ".XXX.",
+        "..X.."
+      ],
+      // Artı / küçük yıldız
+      cross: [
+        "..X..",
+        "..X..",
+        "XXXXX",
+        "..X..",
+        "..X.."
+      ],
+      // Çiçek — dört yapraklı
+      flower: [
+        ".X.X.",
+        "XXXXX",
+        ".XXX.",
+        "XXXXX",
+        ".X.X."
+      ],
+      // Küçük noktalı kare
+      dot: [
+        "XX",
+        "XX"
+      ],
+      // İnce eğik şerit (sallanma hissi verir)
+      streak: [
+        "X..",
+        "XX.",
+        ".XX",
+        "..X"
+      ]
+    };
+
+    /* Pastel paleti — yumuşak, masalsı */
+    const CONFETTI_COLORS = [
+      "#F2A8C8", // pembe
+      "#A8E0C8", // mint (buton karşıtının açık tonu)
+      "#C8B8E8", // lavanta
+      "#F8E8A8", // pale yellow
+      "#A8D0E8", // sky blue
+      "#FBE0C8", // peach cream
+      "#F5C8DD", // light rose
+      "#B8E8E0", // aqua
+      "#FFFFFF"  // beyaz parıltı
+    ];
+
+    /* Konfeti SVG üreteci — verilen şekil ve renkten <svg> döner */
+    function makeConfettiSvg(shapeKey, color) {
+      const shape = CONFETTI_SHAPES[shapeKey];
+      const px = 4; // her piksel 4 birim
+      const w = shape[0].length * px;
+      const h = shape.length * px;
+      let rects = "";
+      for (let y = 0; y < shape.length; y++) {
+        for (let x = 0; x < shape[0].length; x++) {
+          if (shape[y][x] === "X") {
+            rects += `<rect x="${x*px}" y="${y*px}" width="${px}" height="${px}" fill="${color}"/>`;
+          }
+        }
+      }
+      return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
+    }
+
+    /* Konfetiyi sayfaya yağdır
+       Her parça rastgele konum, renk, şekil, hız, dönüş ve ölçek alır.
+       Animasyon bitince DOM'dan kaldırılır (bellek temiz tutulur). */
+    function spawnConfetti(count = 70) {
+      const container = document.getElementById("confetti");
+      const shapeKeys = Object.keys(CONFETTI_SHAPES);
+
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+
+        const shape    = shapeKeys[Math.floor(Math.random() * shapeKeys.length)];
+        const color    = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+        const startX   = Math.random() * 100;             // % yatay başlangıç
+        const duration = 3.5 + Math.random() * 3.5;       // 3.5-7s
+        const delay    = Math.random() * 1.5;             // 0-1.5s
+        const sway     = (Math.random() - 0.5) * 200;     // -100 to +100 px yan kayma
+        const rotDir   = Math.random() < 0.5 ? -1 : 1;
+        const rotate   = rotDir * (360 + Math.random() * 720); // farklı yönlerde dönüş
+        const scale    = 1.2 + Math.random() * 1.8;       // 1.2-3x büyütme
+        const opacity  = 0.85 + Math.random() * 0.15;
+
+        piece.style.left              = `${startX}vw`;
+        piece.style.animationDuration = `${duration}s`;
+        piece.style.animationDelay    = `${delay}s`;
+        piece.style.opacity           = opacity;
+        piece.style.setProperty("--sway",   `${sway}px`);
+        piece.style.setProperty("--rotate", `${rotate}deg`);
+        piece.style.setProperty("--scale",  scale);
+
+        piece.innerHTML = makeConfettiSvg(shape, color);
+        container.appendChild(piece);
+
+        // Animasyon bittikten sonra kaldır
+        setTimeout(() => piece.remove(), (duration + delay) * 1000 + 200);
+      }
+    }
+
+    /* =========================================================
+       DURUM
+       ========================================================= */
+    const state = {
+      currentIndex: 0,
+      answers: new Array(QUESTIONS.length).fill(null)
+    };
+
+    const screens = {
+      intro:    document.getElementById("screen-intro"),
+      question: document.getElementById("screen-question"),
+      result:   document.getElementById("screen-result")
+    };
+    const elQuestion = document.getElementById("question-text");
+    const elOptions  = document.getElementById("options-list");
+    const elProgress = document.getElementById("progress-count");
+    const elBarFill  = document.getElementById("progress-fill");
+    const elPixel    = document.getElementById("result-pixel");
+    const btnStart   = document.getElementById("start-btn");
+    const btnNext    = document.getElementById("next-btn");
+    const btnBack    = document.getElementById("back-btn");
+    const btnRestart = document.getElementById("restart-btn");
+    const card       = document.getElementById("card");
+
+    /* Ekran yönetimi */
+    function showScreen(name) {
+      Object.entries(screens).forEach(([key, el]) => {
+        el.classList.toggle("hidden", key !== name);
+      });
+      card.style.animation = "none";
+      void card.offsetWidth;
+      card.style.animation = "fadeUp .4s ease both";
+    }
+
+    /* Soruyu çiz */
+    function renderQuestion() {
+      const q = QUESTIONS[state.currentIndex];
+      const previousAnswer = state.answers[state.currentIndex];
+
+      elQuestion.textContent = q.text;
+      elProgress.textContent = `Soru ${state.currentIndex + 1} / ${QUESTIONS.length}`;
+
+      const progress = (state.currentIndex / QUESTIONS.length) * 100;
+      elBarFill.style.width = `${progress}%`;
+
+      elOptions.innerHTML = "";
+      q.options.forEach((opt, idx) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.type = "button";
+        btn.dataset.type = opt.type;
+
+        const letter = String.fromCharCode(65 + idx);
+        btn.innerHTML = `
+          <span class="marker">${letter}</span>
+          <span>${opt.text}</span>
+        `;
+
+        if (previousAnswer === opt.type) {
+          btn.classList.add("selected");
+        }
+
+        btn.addEventListener("click", () => selectOption(opt.type, btn));
+        li.appendChild(btn);
+        elOptions.appendChild(li);
+      });
+
+      btnNext.disabled = !previousAnswer;
+      btnBack.style.visibility = state.currentIndex === 0 ? "hidden" : "visible";
+      btnNext.textContent = state.currentIndex === QUESTIONS.length - 1
+        ? "Sonucu Gör"
+        : "Devam Et";
+    }
+
+    function selectOption(type, buttonEl) {
+      elOptions.querySelectorAll(".option").forEach(b => b.classList.remove("selected"));
+      buttonEl.classList.add("selected");
+      state.answers[state.currentIndex] = type;
+      btnNext.disabled = false;
+    }
+
+    /* Sonuç hesapla */
+    function computeResult() {
+      const tally = { analitik: 0, yaratici: 0, sosyal: 0, sakin: 0 };
+      state.answers.forEach(type => { if (type) tally[type]++; });
+
+      let winner = "analitik";
+      let max = -1;
+      for (const [type, count] of Object.entries(tally)) {
+        if (count > max) { max = count; winner = type; }
+      }
+      return winner;
+    }
+
+    /* Sonuç ekranını doldur — pixel art + konfeti birlikte */
+    function renderResult() {
+      const key = computeResult();
+      const r = RESULTS[key];
+      const sprite = SPRITES[key];
+
+      document.getElementById("result-title").textContent       = r.title;
+      document.getElementById("result-description").textContent = r.description;
+      document.getElementById("result-strengths").textContent   = r.strengths;
+      document.getElementById("result-development").textContent = r.development;
+
+      elPixel.innerHTML = renderSprite(key);
+      elPixel.style.setProperty("--pixel-bg", sprite.bg);
+
+      elBarFill.style.width = "100%";
+      showScreen("result");
+
+      // 🎉 Konfeti yağdır
+      spawnConfetti(70);
+    }
+
+    /* Navigasyon */
+    function goNext() {
+      if (state.currentIndex < QUESTIONS.length - 1) {
+        state.currentIndex++;
+        renderQuestion();
+      } else {
+        renderResult();
+      }
+    }
+
+    function goBack() {
+      if (state.currentIndex > 0) {
+        state.currentIndex--;
+        renderQuestion();
+      }
+    }
+
+    function restart() {
+      state.currentIndex = 0;
+      state.answers = new Array(QUESTIONS.length).fill(null);
+      elBarFill.style.width = "0%";
+      // Eski konfetileri temizle (ihtiyaten)
+      document.getElementById("confetti").innerHTML = "";
+      showScreen("intro");
+    }
+
+    /* Olay dinleyicileri */
+    btnStart.addEventListener("click", () => {
+      showScreen("question");
+      renderQuestion();
+    });
+    btnNext.addEventListener("click", goNext);
+    btnBack.addEventListener("click", goBack);
+    btnRestart.addEventListener("click", restart);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !screens.question.classList.contains("hidden")) {
+        if (!btnNext.disabled) goNext();
+      }
+    });
+  </script>
+</body>
+</html>
