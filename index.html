@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kariyer İnşa Görüşmesi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-title">Kariyer İnşa Görüşmesi</span>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="icon-button" aria-label="Tema değiştir" title="Karanlık / Aydınlık mod">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path class="icon-sun" d="M12 3v2M12 19v2M5 12H3M21 12h-2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>
+            <circle class="icon-sun" cx="12" cy="12" r="4"/>
+            <path class="icon-moon" style="display:none" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-label" id="progressLabel">Giriş</div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- PAGE 0 — GİRİŞ -->
+      <section class="page active" data-page="0">
+        <h1 class="page-title">Kariyer hikâyeniz, kendi sözcüklerinizle.</h1>
+
+        <p class="question-text">Mark Savickas'ın oluşturduğu kariyer inşa görüşmesi protokolüne dayanan beş soruluk bir kariyer anlatısı yansıtma çalışmasıdır. Bu görüşme, kariyerinizi inşa ederken size yol gösterecek temaları, rehberleri ve içsel anlatıları yüzeye çıkarmak için tasarlanmıştır. Her soru ayrı bir sayfada sunulacak; <strong>en az 120 kelime</strong> yazdığınızda bir sonraki soruya geçebilirsiniz.</p>
+
+        <div class="consent-box">
+          <label class="consent-label">
+            <input type="checkbox" id="consentCheck" class="consent-checkbox">
+            <span class="consent-checkmark"></span>
+            <span class="consent-text">
+              Verdiğim cevapların, anonim olarak sonraki araştırma ve projeler
+              kapsamında kullanılabileceğini kabul ediyorum.
+            </span>
+          </label>
+        </div>
+
+        <div class="action-row" style="justify-content:flex-end">
+          <button id="startBtn" class="btn btn-primary" disabled>
+            <span class="btn-label">Görüşmeye başla</span>
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- SORU 1 -->
+      <section class="page" data-page="1">
+        <div class="page-number">Soru 01 / 05</div>
+        <p class="question-text">Büyürken kime hayrandınız? Onun hakkında bana biraz anlatır mısınız? Bunu açıklar mısınız? Çocukluk ya da gençlik döneminizde — gerçek bir kişi, bir karakter, bir akraba ya da tanımadığınız biri olabilir.</p>
+        <div class="answer-section"></div>
+      </section>
+
+      <!-- SORU 2 -->
+      <section class="page" data-page="2">
+        <div class="page-number">Soru 02 / 05</div>
+        <p class="question-text">Düzenli olarak takip ettiğiniz web sayfaları, YouTube kanalları ya da sosyal medya hesapları var mı? Bunlarda ne tarz içerikler üretiyorsunuz ve hangi yönlerini seviyorsunuz? Bunu açıklar mısınız? Sizi meşgul eden, ilham veren ya da bilgilendiren dijital kaynaklar.</p>
+        <div class="answer-section"></div>
+      </section>
+
+      <!-- SORU 3 -->
+      <section class="page" data-page="3">
+        <div class="page-number">Soru 03 / 05</div>
+        <p class="question-text">En sevdiğiniz kitap ya da film hangisi? Hikâyesini bana anlatır mısınız? Bunu açıklar mısınız? Sizi en çok etkileyen olay örgüsünü ve karakterlerin yolculuğunu kendi sözlerinizle aktarın.</p>
+        <div class="answer-section"></div>
+      </section>
+
+      <!-- SORU 4 -->
+      <section class="page" data-page="4">
+        <div class="page-number">Soru 04 / 05</div>
+        <p class="question-text">En sevdiğiniz söz ya da motto nedir? Bunu açıklar mısınız? Sıklıkla aklınıza gelen, size yol gösteren bir cümle, atasözü ya da deyiş.</p>
+        <div class="answer-section"></div>
+      </section>
+
+      <!-- SORU 5 -->
+      <section class="page" data-page="5">
+        <div class="page-number">Soru 05 / 05</div>
+        <p class="question-text">En erken anılarınız neler? Üç ile altı yaşları arasında başınıza geldiğini hatırladığınız üç olay duymak isterim. Bunu açıklar mısınız? Üç ayrı anıyı kısaca anlatın. Detaylar — duygular, mekânlar, kim vardı — önemlidir.</p>
+        <div class="answer-section"></div>
+      </section>
+
+      <!-- PAGE 6 — YANSITMA -->
+      <section class="page" data-page="6">
+        <div class="page-number">Yansıtma</div>
+        <h2 class="page-title">Hikâyenizdeki örüntüler.</h2>
+        <p class="page-subtitle">Cevaplarınız yapay zekâ değerlendirmesine gönderiliyor. Bu, kendi anlatınızdaki temaları görmenize yardımcı olacak bir başlangıç noktasıdır.</p>
+
+        <div id="insightCard" class="insight-card">
+          <div class="insight-label">Yapay Zekâ Yansıtması</div>
+          <div id="insightContent" class="insight-content"></div>
+        </div>
+
+        <div class="disclaimer">
+          <div class="disclaimer-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          </div>
+          <div class="disclaimer-text">
+            <strong>Önemli not:</strong> Yukarıdaki çıktı, bir yapay zekâ tarafından üretilmiş <em>basit bir ön değerlendirmedir</em>.
+            Bu, kalifiye bir kariyer danışmanının yapacağı klinik formülasyonun yerine geçmez.
+            Anlamlı ve geçerli bir değerlendirme için lütfen alanında uzman bir
+            <strong>kariyer danışmanıyla</strong> doğrudan iletişime geçin.
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 7 — TAMAMLANDI -->
+      <section class="page" data-page="7">
+        <div class="completed-message">
+          <div class="completed-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <h2 class="page-title">Bu görüşmeyi zaten tamamladınız.</h2>
+          <p class="page-subtitle">Cevaplarınız ve yansıtmanız başarıyla kaydedildi. Katılımınız için teşekkür ederiz.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- NAVİGASYON FOOTER -->
+    <footer class="nav-footer" id="navFooter" style="display:none">
+      <button id="prevBtn" class="btn btn-secondary">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        Önceki
+      </button>
+      <div class="nav-meta" id="navMeta"></div>
+      <button id="nextBtn" class="btn btn-primary" disabled>
+        <span class="btn-label">Kaydet ve devam et</span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
